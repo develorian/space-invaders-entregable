@@ -1,15 +1,11 @@
 import pygame
 import sys
 from game import Game
+from constants import *
 
 def main():
     # Inicializar Pygame
     pygame.init()
-    
-    # Configuración de la pantalla
-    SCREEN_WIDTH = 900
-    SCREEN_HEIGHT = 600
-    FPS = 60
     
     # Crear ventana
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
