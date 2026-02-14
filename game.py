@@ -74,6 +74,7 @@ class Game:
                     'color': (random.randint(100, 255), random.randint(100, 255), random.randint(100, 255))
                 })
     
+    # En clase en lugar de usar handle_events usaron: def escape(self): -> 
     def handle_events(self):
         """Manejar eventos del juego"""
         for event in pygame.event.get():

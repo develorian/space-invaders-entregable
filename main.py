@@ -1,7 +1,7 @@
 import pygame
 import sys
 from game import Game
-from constants import *
+from constants import SCREEN_WIDTH, SCREEN_HEIGHT, FPS
 
 def main():
     # Inicializar Pygame
@@ -16,8 +16,8 @@ def main():
     
     # Cargar imágenes
     try:
-        bullet_img = pygame.image.load("assets/bullet.png").convert_alpha()
-        spaceship_img = pygame.image.load("assets/spaceship.png").convert_alpha()
+        bullet_img = pygame.image.load("assets/img/player/bullet.png").convert_alpha()
+        spaceship_img = pygame.image.load("assets/img/player/spaceship.png").convert_alpha()
     except pygame.error as e:
         print(f"No se pudieron cargar las imágenes: {e}")
         print("Asegúrate de que existen los archivos:")
