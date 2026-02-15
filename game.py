@@ -217,6 +217,8 @@ class Game:
     
     def check_game_conditions(self):
         """Verificar condiciones de victoria o derrota"""
+
+        # GAME OVER 
         # Verificar si el jugador perdió
         if self.lives <= 0:
             self.game_over = True
@@ -267,7 +269,7 @@ class Game:
         """Dibujar todos los elementos del juego"""
         # Fondo con estrellas (efecto simple)
         self.window.fill((0, 0, 20))  # Azul oscuro
-        
+
         # Dibujar estrellas de fondo
         for i in range(50):
             x = random.randint(0, self.WIDTH)
@@ -287,7 +289,7 @@ class Game:
             
             # Dibujar balas del jugador
             for bullet in self.player_bullets:
-                self.window.blit(self.bullet_img, bullet)
+                self.window.blit(self.bullet_img)
             
             # Dibujar balas enemigas
             for bullet in self.enemy_bullets:
@@ -312,9 +314,10 @@ class Game:
         bullets_text = self.font.render(f"Bullets: {self.bullets - len(self.player_bullets)}/{self.bullets}", True, (255, 255, 255))
         
         self.window.blit(score_text, (10, 10))
-        self.window.blit(lives_text, (10, 40))
-        self.window.blit(level_text, (10, 70))
-        self.window.blit(bullets_text, (10, 100))
+        self.window.blit(lives_text, (750, 10))
+        self.window.blit(level_text, (10, 40))
+        self.window.blit(bullets_text, (750, 40))
+        
     
     def draw_game_over(self):
         """Dibujar pantalla de Game Over"""
