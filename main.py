@@ -3,31 +3,18 @@ import sys
 from game import Game
 from constants import SCREEN_WIDTH, SCREEN_HEIGHT, FPS
 
+
 def main():
+    """Función principal para iniciar el juego"""
     # Inicializar Pygame
     pygame.init()
     
     # Crear ventana
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    pygame.display.set_caption("My Space Invaders 🚀")
+    pygame.display.set_caption("Space Invaders 🚀")
     
     # Cargar fuentes
     font = pygame.font.Font(None, 36)
-    
-    # Cargar imágenes
-    try:
-        bullet_img = pygame.image.load("assets/img/player/bullet.png").convert_alpha()
-        spaceship_img = pygame.image.load("assets/img/player/spaceship.png").convert_alpha()
-    except pygame.error as e:
-        print(f"No se pudieron cargar las imágenes: {e}")
-        print("Asegúrate de que existen los archivos:")
-        print("- assets/bullet.png")
-        print("- assets/spaceship.png")
-        sys.exit()
-    
-    # Redimensionar imágenes si es necesario
-    spaceship_img = pygame.transform.scale(spaceship_img, (50, 40))
-    bullet_img = pygame.transform.scale(bullet_img, (5, 15))
     
     # Crear instancia del juego
     game = Game(
@@ -36,14 +23,16 @@ def main():
         lives=3,
         window=screen,
         screen_width=SCREEN_WIDTH,
-        screen_height=SCREEN_HEIGHT,
-        bullets=5,  # Máximo de balas en pantalla
-        bullet_img=bullet_img,
-        spaceship_img=spaceship_img
+        screen_height=SCREEN_HEIGHT
     )
     
     # Ejecutar el juego
     game.run()
+    
+    # Salir de Pygame
+    pygame.quit()
+    sys.exit()
+
 
 if __name__ == "__main__":
     main()
