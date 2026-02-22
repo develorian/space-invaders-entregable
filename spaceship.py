@@ -22,7 +22,7 @@ class SpaceShip:
 
         # Cooldown para disparo (frames)
         self.shoot_cooldown = 0
-        self.shoot_cooldown_max = 15
+        self.shoot_cooldown_max = 1
 
         # Máscara para colisiones pixel-perfect
         self.mask = None

@@ -1,6 +1,7 @@
 import pygame
 import os
 from spaceship import SpaceShip
+from constants import PLAYER_MAX_BULLETS, PLAYER_SHOOT_COOLDOWN, PLAYER_RELOAD_TIME
 
 
 class Player(SpaceShip):
@@ -21,12 +22,15 @@ class Player(SpaceShip):
         """
         super().__init__(x, y, health, width, height)
         self.speed = speed
-        self.max_bullets = 5  # Máximo de balas en pantalla
+        # Cargador y recarga
+        self.magazine_size = PLAYER_MAX_BULLETS
+        self.current_ammo = self.magazine_size
+        # Tiempo para recargar 1 proyectil (frames)
+        self.reload_time_per_bullet = PLAYER_RELOAD_TIME
+        self.reload_counter = 0
 
         # Cooldown mejorado para disparos
         self.shoot_cooldown = 0
-        # Usar valor desde constantes para facilitar ajustes
-        from constants import PLAYER_SHOOT_COOLDOWN
         self.shoot_cooldown_max = PLAYER_SHOOT_COOLDOWN  # Frames entre disparos
 
         # Velocidad de las balas
@@ -70,10 +74,17 @@ class Player(SpaceShip):
             # Eliminar balas fuera de pantalla
             if bullet['y'] < 0:
                 self.bullets.remove(bullet)
+        
+        # Recarga gradual: si no hay munición completa, recargar con el contador
+        if self.current_ammo < self.magazine_size:
+            self.reload_counter += 1
+            if self.reload_counter >= self.reload_time_per_bullet:
+                self.reload_counter = 0
+                self.current_ammo += 1
     
     def shoot(self):
         """Disparar si el cooldown lo permite"""
-        if self.shoot_cooldown <= 0 and len(self.bullets) < self.max_bullets:
+        if self.shoot_cooldown <= 0 and self.current_ammo > 0:
             # Tamaño de bala proporcional al ancho de la nave
             bw = max(4, int(self.width * 0.12))
             bh = max(8, int(self.height * 0.5))
@@ -86,6 +97,11 @@ class Player(SpaceShip):
             }
             self.bullets.append(bullet)
             self.shoot_cooldown = self.shoot_cooldown_max
+            # consumir munición del cargador
+            self.current_ammo = max(0, self.current_ammo - 1)
+            # reset reload counter para comenzar a recargar cuando quede vacío
+            if self.current_ammo < self.magazine_size and self.reload_counter == 0:
+                self.reload_counter = 0
             return True
         return False
     

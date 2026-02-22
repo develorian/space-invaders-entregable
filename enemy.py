@@ -11,8 +11,8 @@ class Enemy(SpaceShip):
         super().__init__(x, y, props['health'], ENEMY_WIDTH, ENEMY_HEIGHT)
         self.color = color
         self.base_speed = props['speed']
-        # velocidad vertical, se escala con el nivel
-        self.speed = self.base_speed + (level - 1) * 0.02
+        # velocidad vertical, se escala con el nivel (pequeño incremento por nivel)
+        self.speed = self.base_speed * (1.0 + (level - 1) * 0.03)
         self.base_score = props.get('score', 10)
         self.shot_rate = props.get('shot_rate', 0.01)
 
@@ -41,8 +41,8 @@ class Enemy(SpaceShip):
             base_cd = int(1.0 / float(self.shot_rate))
         except Exception:
             base_cd = 200
-        # Usar cooldown base grande para evitar spam; reducir ligeramente por nivel
-        self.shoot_cooldown_max = max(25, base_cd - int(level * 1.0))
+        # Reducir cooldown por nivel para que disparen más a medida que avanza
+        self.shoot_cooldown_max = max(12, base_cd - int(level * 4))
         self.shoot_cooldown = random.randint(0, self.shoot_cooldown_max)
 
     def move(self, screen_width):
@@ -82,19 +82,27 @@ class EnemyWave:
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.enemies = []
+        # almacenar cantidad de la última oleada generada
+        self.prev_amount = None
 
     def create_wave(self, level):
-        # Cantidad se incrementa lentamente con el nivel
-        base = 3
-        additional = min(level // 1, 20)
-        amount = base + additional + random.randint(5, max(20, level // 5))
-        amount = min(amount, 80)
+        # Determinar cantidad: nivel 1 fija en 10; niveles siguientes = prev + (1..5)
+        if self.prev_amount is None:
+            amount = 10
+        else:
+            amount = self.prev_amount + random.randint(1, 5)
 
         self.enemies = []
+        # controlar ventana de aparición: nivel 1 aparece más cerca de la parte superior;
+        # niveles superiores se dispersan más para aparecer poco a poco
+        if level <= 1:
+            max_offset = 150
+        else:
+            max_offset = min(2000, 300 + level * 120)
         for i in range(amount):
             color = random.choice(list(ENEMY_TYPES.keys()))
             x = random.randint(10, max(10, self.screen_width - ENEMY_WIDTH - 10))
-            y = random.randint(-1500, -50)  # aparecen por encima en distintas alturas
+            y = random.randint(-max_offset, -50)  # aparecen por encima en distintas alturas
             enemy = Enemy(x, y, color=color, level=level)
             # Dar variación horizontal según color
             if color == 'blue':
@@ -106,15 +114,22 @@ class EnemyWave:
 
             self.enemies.append(enemy)
 
+        # guardar la cantidad generada para la siguiente oleada
+        self.prev_amount = len(self.enemies)
         return self.enemies
 
     def update(self, level):
         for e in self.enemies[:]:
             e.move(self.screen_width)
-            # Si salen de la pantalla por abajo, los dejamos para que el juego detecte la condición
+            # Si salen de la pantalla por abajo, eliminarlos de la oleada
             if e.y > self.screen_height + 50:
-                # mantenerlos, game.py decide si es game over al colisionar con jugador o llegar abajo
-                pass
+                try:
+                    self.enemies.remove(e)
+                except ValueError:
+                    pass
+
+    def get_last_wave_count(self):
+        return self.prev_amount
 
     def get_alive_enemies(self):
         return [e for e in self.enemies if e.is_alive()]

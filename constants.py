@@ -12,6 +12,10 @@ PLAYER_BULLET_SPEED = 12
 PLAYER_MAX_BULLETS = 5
 PLAYER_SHOOT_COOLDOWN = 10  # Frames entre disparos (más lento para mayor dificultad)
 
+# Tiempo (en frames) para recargar un proyectil (si se vacía el cargador)
+# Reducido para recarga más rápida (30 frames ≈ 0.5s a 60 FPS)
+PLAYER_RELOAD_TIME = 30
+
 # ============== CONFIGURACIÓN DE ENEMIGOS ==============
 ENEMY_WIDTH = 50
 ENEMY_HEIGHT = 40
